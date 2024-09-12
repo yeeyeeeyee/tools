@@ -1,0 +1,22 @@
+import cv2
+import os
+
+
+VIDEO = "video.mp4" #影片路徑
+video = cv2.VideoCapture(VIDEO) #讀取影片
+# 计数器
+num = 0
+save_step=30 # 隔30帧儲存一次 , 不然會有小得有好幾千張圖大的到幾萬張圖
+
+# 建立資料夾
+if not os.path.exists("images"):
+    os.makedirs("images")
+
+while True:
+    ret, frame = video.read()
+    if not ret:
+        print("not scuessfully read frame")
+        break
+    num += 1
+    if num % save_step == 0:
+        cv2.imwrite("./images/" + str(num) + ".jpg", frame) #寫入到demo_images資料夾中

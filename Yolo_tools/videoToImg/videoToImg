@@ -2,21 +2,61 @@ import cv2
 import os
 
 
-VIDEO = "video.mp4" #影片路徑
-video = cv2.VideoCapture(VIDEO) #讀取影片
-# 计数器
+#影片路徑
+VIDEOS = [
+    "1.mp4",
+    "2.mp4",
+    "3.mp4"
+    ]
+DISPLAY_IMG=False
+FOLDER_NAME="images"
+
+
+#讀取影片
+def load_video(video):
+    video = cv2.VideoCapture(video)
+    return video
+
 num = 0
-save_step=30 # 隔30帧儲存一次 , 不然會有小得有好幾千張圖大的到幾萬張圖
+def save_images(video:cv2.VideoCapture , save_path, save_step, display_img=False):
+    # 计数器
+    global num
+    
+    while True:
+        ret, frame = video.read()
+        if not ret:
+            break
+        if display_img:
+            cv2.imshow("frame", frame)
+            if cv2.waitKey(10)==ord("q"):
+                break   
+        # 每隔save_step帧保存一次
+        num += 1 
+        if num % save_step == 0:
+            cv2.imwrite(save_path + str(num) + ".jpg", frame)
 
-# 建立資料夾
-if not os.path.exists("images"):
-    os.makedirs("images")
+def creat_folder(folder_name):
+    # 建立資料夾
+    if not os.path.exists(folder_name):
+        os.makedirs(folder_name)
 
-while True:
-    ret, frame = video.read()
-    if not ret:
-        print("not scuessfully read frame")
-        break
-    num += 1
-    if num % save_step == 0:
-        cv2.imwrite("./images/" + str(num) + ".jpg", frame) #寫入到demo_images資料夾中
+def main():
+    creat_folder(FOLDER_NAME)
+    for video in VIDEOS:
+        print(f"video name : {video}")
+        save_images(
+            load_video(video), #影片
+            F"./{FOLDER_NAME}/", #儲存路徑
+            30,  # 隔30帧儲存一次 , 不然會有小得有好幾千張圖大的到幾萬張圖
+            DISPLAY_IMG # 是否顯示圖片
+            ) 
+
+if __name__ == "__main__":
+    main()
+
+
+
+
+
+
+
